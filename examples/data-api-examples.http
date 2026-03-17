@@ -1,0 +1,92 @@
+### 技能数据查看 API 示例
+### 这些接口用于查看已爬取的技能数据
+
+### 1. 获取完整的爬取数据 (JSON格式)
+GET http://localhost:3002/skills/data
+Accept: application/json
+
+###
+
+### 2. 获取数据摘要和统计信息
+GET http://localhost:3002/skills/data/summary
+Accept: application/json
+
+###
+
+### 3. 按分类获取技能数据 - 热门AI技能
+GET http://localhost:3002/skills/data/category/hotAISkills
+Accept: application/json
+
+###
+
+### 4. 按分类获取技能数据 - Skills.sh相关
+GET http://localhost:3002/skills/data/category/skillsShRelated
+Accept: application/json
+
+###
+
+### 5. 搜索技能 - 关键词搜索
+GET http://localhost:3002/skills/data/search?q=ai
+Accept: application/json
+
+###
+
+### 6. 搜索技能 - 按作者筛选
+GET http://localhost:3002/skills/data/search?author=microsoft
+Accept: application/json
+
+###
+
+### 7. 搜索技能 - 按星标范围筛选
+GET http://localhost:3002/skills/data/search?stars_min=10000&stars_max=100000
+Accept: application/json
+
+###
+
+### 8. 搜索技能 - 按标签筛选
+GET http://localhost:3002/skills/data/search?tag=python
+Accept: application/json
+
+###
+
+### 9. 组合搜索 - Microsoft的AI相关项目，星标大于1000
+GET http://localhost:3002/skills/data/search?q=ai&author=microsoft&stars_min=1000
+Accept: application/json
+
+###
+
+### 10. 搜索高星标项目
+GET http://localhost:3002/skills/data/search?stars_min=50000
+Accept: application/json
+
+###
+
+### 11. 搜索框架类项目
+GET http://localhost:3002/skills/data/search?tag=framework
+Accept: application/json
+
+###
+
+### 12. 搜索智能体相关项目
+GET http://localhost:3002/skills/data/search?q=agent
+Accept: application/json
+
+###
+
+### 13. 搜索LLM相关项目
+GET http://localhost:3002/skills/data/search?tag=llm
+Accept: application/json
+
+###
+
+### 14. 测试无效分类
+GET http://localhost:3002/skills/data/category/invalid_category
+Accept: application/json
+
+###
+
+### 15. 复杂搜索 - Python AI框架，星标1万以上
+GET http://localhost:3002/skills/data/search?q=python&tag=ai&stars_min=10000
+Accept: application/json
+
+###
