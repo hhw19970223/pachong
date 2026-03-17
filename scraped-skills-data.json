@@ -1,0 +1,259 @@
+{
+  "scrapedAt": "2026-03-17T08:34:32.535Z",
+  "totalRepositories": 10,
+  "averageStars": 41080,
+  "maxStars": 157961,
+  "minStars": 53,
+  "summary": {
+    "hotSkills": 5,
+    "skillsShRelated": 5,
+    "totalStars": 410803,
+    "lastUpdated": "2026-03-17T08:33:41Z"
+  },
+  "categories": {
+    "hotAISkills": {
+      "description": "热门AI技能仓库 - 当前最受欢迎的AI/机器学习框架和工具",
+      "totalStars": 401304,
+      "skills": [
+        {
+          "rank": 1,
+          "title": "semantic-kernel",
+          "description": "Integrate cutting-edge LLM technology quickly and easily into your apps",
+          "author": "microsoft",
+          "repository": "https://github.com/microsoft/semantic-kernel",
+          "stars": 27484,
+          "url": "https://github.com/microsoft/semantic-kernel",
+          "lastUpdated": "2026-03-17T07:00:02Z",
+          "tags": ["ai", "artificial-intelligence", "llm", "openai", "sdk"],
+          "category": "AI框架",
+          "language": "C#",
+          "license": "MIT"
+        },
+        {
+          "rank": 2,
+          "title": "langchain",
+          "description": "The agent engineering platform",
+          "author": "langchain-ai",
+          "repository": "https://github.com/langchain-ai/langchain",
+          "stars": 129854,
+          "url": "https://github.com/langchain-ai/langchain",
+          "lastUpdated": "2026-03-17T08:33:41Z",
+          "tags": ["agents", "ai", "ai-agents", "anthropic", "chatgpt", "deepagents", "enterprise", "framework", "gemini", "generative-ai", "langchain", "langgraph", "llm", "multiagent", "open-source", "openai", "pydantic", "python", "rag"],
+          "category": "智能体平台",
+          "language": "Python",
+          "license": "MIT"
+        },
+        {
+          "rank": 3,
+          "title": "openai-python",
+          "description": "The official Python library for the OpenAI API",
+          "author": "openai",
+          "repository": "https://github.com/openai/openai-python",
+          "stars": 30270,
+          "url": "https://github.com/openai/openai-python",
+          "lastUpdated": "2026-03-17T08:23:58Z",
+          "tags": ["openai", "python"],
+          "category": "API客户端",
+          "language": "Python",
+          "license": "Apache-2.0"
+        },
+        {
+          "rank": 4,
+          "title": "autogen",
+          "description": "A programming framework for agentic AI",
+          "author": "microsoft",
+          "repository": "https://github.com/microsoft/autogen",
+          "stars": 55735,
+          "url": "https://github.com/microsoft/autogen",
+          "lastUpdated": "2026-03-17T08:26:45Z",
+          "tags": ["agentic", "agentic-agi", "agents", "ai", "autogen", "autogen-ecosystem", "chatgpt", "framework", "llm-agent", "llm-framework"],
+          "category": "智能体框架",
+          "language": "Python",
+          "license": "MIT"
+        },
+        {
+          "rank": 5,
+          "title": "transformers",
+          "description": "🤗 Transformers: the model-definition framework for state-of-the-art machine learning models in text, vision, audio, and multimodal models, for both inference and training.",
+          "author": "huggingface",
+          "repository": "https://github.com/huggingface/transformers",
+          "stars": 157961,
+          "url": "https://github.com/huggingface/transformers",
+          "lastUpdated": "2026-03-17T08:26:00Z",
+          "tags": ["audio", "deep-learning", "deepseek", "gemma", "glm", "hacktoberfest", "llm", "machine-learning", "model-hub", "natural-language-processing", "nlp", "pretrained-models", "python", "pytorch", "pytorch-transformers", "qwen", "speech-recognition", "transformer", "vlm"],
+          "category": "机器学习框架",
+          "language": "Python",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    "skillsShRelated": {
+      "description": "Skills.sh相关仓库 - 专门的智能体技能库和工具",
+      "totalStars": 10261,
+      "skills": [
+        {
+          "rank": 1,
+          "title": "GitHub-Copilot-for-Azure",
+          "description": "GitHub Copilot for Azure",
+          "author": "microsoft",
+          "repository": "https://github.com/microsoft/github-copilot-for-azure",
+          "stars": 156,
+          "url": "https://github.com/microsoft/github-copilot-for-azure",
+          "lastUpdated": "2026-03-17T00:05:28Z",
+          "tags": ["agent-skills"],
+          "category": "Azure技能",
+          "language": "TypeScript",
+          "license": "MIT"
+        },
+        {
+          "rank": 2,
+          "title": "skills",
+          "description": "inference.sh Agent skills for using our API to give your agents access to hundreds of apps and other agents",
+          "author": "inferen-sh",
+          "repository": "https://github.com/inferen-sh/skills",
+          "stars": 158,
+          "url": "https://github.com/inferen-sh/skills",
+          "lastUpdated": "2026-03-17T08:25:05Z",
+          "tags": [],
+          "category": "技能平台",
+          "language": "TypeScript",
+          "license": "MIT"
+        },
+        {
+          "rank": 3,
+          "title": "azure-skills",
+          "description": "Official agent plugin providing skills and MCP server configurations for Azure scenarios.",
+          "author": "microsoft",
+          "repository": "https://github.com/microsoft/azure-skills",
+          "stars": 386,
+          "url": "https://github.com/microsoft/azure-skills",
+          "lastUpdated": "2026-03-17T07:25:11Z",
+          "tags": ["agent-skills"],
+          "category": "Azure技能",
+          "language": "TypeScript",
+          "license": "MIT"
+        },
+        {
+          "rank": 4,
+          "title": "impeccable",
+          "description": "The design language that makes your AI harness better at design.",
+          "author": "pbakaus",
+          "repository": "https://github.com/pbakaus/impeccable",
+          "stars": 9508,
+          "url": "https://github.com/pbakaus/impeccable",
+          "lastUpdated": "2026-03-17T08:32:19Z",
+          "tags": [],
+          "category": "设计工具",
+          "language": "TypeScript",
+          "license": "MIT"
+        },
+        {
+          "rank": 5,
+          "title": "skills-template",
+          "description": "",
+          "author": "supercent-io",
+          "repository": "https://github.com/supercent-io/skills-template",
+          "stars": 53,
+          "url": "https://github.com/supercent-io/skills-template",
+          "lastUpdated": "2026-03-16T12:19:20Z",
+          "tags": [],
+          "category": "技能模板",
+          "language": "TypeScript",
+          "license": "MIT"
+        }
+      ]
+    }
+  },
+  "topRepositoriesByStars": [
+    {
+      "title": "transformers",
+      "stars": 157961,
+      "author": "huggingface",
+      "description": "🤗 Transformers: the model-definition framework for state-of-the-art machine learning models"
+    },
+    {
+      "title": "langchain",
+      "stars": 129854,
+      "author": "langchain-ai",
+      "description": "The agent engineering platform"
+    },
+    {
+      "title": "autogen",
+      "stars": 55735,
+      "author": "microsoft",
+      "description": "A programming framework for agentic AI"
+    },
+    {
+      "title": "openai-python",
+      "stars": 30270,
+      "author": "openai",
+      "description": "The official Python library for the OpenAI API"
+    },
+    {
+      "title": "semantic-kernel",
+      "stars": 27484,
+      "author": "microsoft",
+      "description": "Integrate cutting-edge LLM technology quickly and easily into your apps"
+    }
+  ],
+  "authorStats": {
+    "microsoft": {
+      "repositories": 3,
+      "totalStars": 83375,
+      "projects": ["semantic-kernel", "autogen", "GitHub-Copilot-for-Azure", "azure-skills"]
+    },
+    "huggingface": {
+      "repositories": 1,
+      "totalStars": 157961,
+      "projects": ["transformers"]
+    },
+    "langchain-ai": {
+      "repositories": 1,
+      "totalStars": 129854,
+      "projects": ["langchain"]
+    },
+    "openai": {
+      "repositories": 1,
+      "totalStars": 30270,
+      "projects": ["openai-python"]
+    },
+    "pbakaus": {
+      "repositories": 1,
+      "totalStars": 9508,
+      "projects": ["impeccable"]
+    },
+    "inferen-sh": {
+      "repositories": 1,
+      "totalStars": 158,
+      "projects": ["skills"]
+    },
+    "supercent-io": {
+      "repositories": 1,
+      "totalStars": 53,
+      "projects": ["skills-template"]
+    }
+  },
+  "tagAnalysis": {
+    "mostCommonTags": [
+      {"tag": "ai", "count": 4},
+      {"tag": "python", "count": 4},
+      {"tag": "llm", "count": 4},
+      {"tag": "framework", "count": 3},
+      {"tag": "agents", "count": 3},
+      {"tag": "openai", "count": 3},
+      {"tag": "chatgpt", "count": 2},
+      {"tag": "agent-skills", "count": 2}
+    ],
+    "uniqueTags": 47,
+    "totalTags": 69
+  },
+  "metadata": {
+    "scraper": "cron-spider-ts",
+    "version": "1.0.0",
+    "scrapingMethod": "GitHub API + Skills.sh analysis",
+    "dataSource": ["GitHub API", "Skills.sh"],
+    "rateLimit": "Respected GitHub API limits",
+    "lastFullScrape": "2026-03-17T08:34:32.535Z",
+    "nextPlannedScrape": "2026-03-17T20:34:32.535Z"
+  }
+}

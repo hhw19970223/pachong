@@ -1,0 +1,87 @@
+### Skills.sh 爬虫 API 示例
+### 使用 VS Code REST Client 或其他HTTP客户端测试
+
+### 1. 获取技能爬虫使用说明
+GET http://localhost:3002/skills
+Accept: application/json
+
+###
+
+### 2. 爬取 Skills.sh 前10个技能 (默认)
+GET http://localhost:3002/skills/scrape
+Accept: application/json
+
+###
+
+### 3. 爬取 Skills.sh 前5个技能
+GET http://localhost:3002/skills/scrape?limit=5
+Accept: application/json
+
+###
+
+### 4. 爬取指定的GitHub仓库技能信息
+POST http://localhost:3002/skills/scrape-repos
+Content-Type: application/json
+
+{
+  "repositories": [
+    "microsoft/github-copilot-for-azure",
+    "inferen-sh/skills",
+    "microsoft/azure-skills",
+    "pbakaus/impeccable",
+    "supercent-io/skills-template"
+  ]
+}
+
+###
+
+### 5. 爬取更多知名技能仓库
+POST http://localhost:3002/skills/scrape-repos
+Content-Type: application/json
+
+{
+  "repositories": [
+    "langchain-ai/langchain",
+    "microsoft/autogen",
+    "openai/openai-python",
+    "anthropics/anthropic-sdk-python",
+    "huggingface/transformers",
+    "microsoft/semantic-kernel",
+    "run-llama/llama_index",
+    "microsoft/PromptCraft-Robotics"
+  ]
+}
+
+###
+
+### 6. 测试错误处理 - 超出限制
+GET http://localhost:3002/skills/scrape?limit=100
+Accept: application/json
+
+###
+
+### 7. 测试错误处理 - 无效仓库格式
+POST http://localhost:3002/skills/scrape-repos
+Content-Type: application/json
+
+{
+  "repositories": []
+}
+
+###
+
+### 8. 爬取特定AI技能相关仓库
+POST http://localhost:3002/skills/scrape-repos
+Content-Type: application/json
+
+{
+  "repositories": [
+    "guidance-ai/guidance",
+    "microsoft/TaskWeaver",
+    "microsoft/JARVIS",
+    "yoheinakajima/babyagi",
+    "Significant-Gravitas/Auto-GPT"
+  ]
+}
+
+###

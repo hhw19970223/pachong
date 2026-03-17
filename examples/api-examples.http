@@ -1,0 +1,133 @@
+### Cron Spider TypeScript API 示例
+### 可以使用 VS Code 的 REST Client 扩展或其他 HTTP 客户端工具
+
+### 1. 获取服务状态
+GET http://localhost:3001/
+Accept: application/json
+
+###
+
+### 2. 获取健康检查
+GET http://localhost:3001/health
+Accept: application/json
+
+###
+
+### 3. 获取所有任务
+GET http://localhost:3001/tasks
+Accept: application/json
+
+###
+
+### 4. 创建价格监控任务
+POST http://localhost:3001/tasks
+Content-Type: application/json
+
+{
+  "name": "price-monitor-example",
+  "schedule": "0 */5 * * * *",
+  "url": "https://httpbin.org/json",
+  "selector": "",
+  "webhook": "",
+  "startImmediately": false,
+  "headers": {
+    "User-Agent": "Cron Spider Bot"
+  },
+  "timeout": 10000,
+  "maxRetries": 3
+}
+
+###
+
+### 5. 创建并立即启动任务
+POST http://localhost:3001/tasks
+Content-Type: application/json
+
+{
+  "name": "news-scraper",
+  "schedule": "0 0 */6 * * *",
+  "url": "https://httpbin.org/html",
+  "selector": "h1",
+  "webhook": "https://webhook.site/your-unique-id",
+  "startImmediately": true
+}
+
+###
+
+### 6. 获取单个任务状态
+GET http://localhost:3001/tasks/price-monitor-example
+Accept: application/json
+
+###
+
+### 7. 启动任务
+POST http://localhost:3001/tasks/price-monitor-example/start
+Content-Type: application/json
+
+###
+
+### 8. 手动执行任务
+POST http://localhost:3001/tasks/price-monitor-example/execute
+Content-Type: application/json
+
+{
+  "url": "https://httpbin.org/json",
+  "selector": "",
+  "webhook": "https://webhook.site/test"
+}
+
+###
+
+### 9. 停止任务
+POST http://localhost:3001/tasks/price-monitor-example/stop
+Content-Type: application/json
+
+###
+
+### 10. 重启任务
+POST http://localhost:3001/tasks/price-monitor-example/restart
+Content-Type: application/json
+
+###
+
+### 11. 删除任务
+DELETE http://localhost:3001/tasks/price-monitor-example
+Content-Type: application/json
+
+###
+
+### 12. 测试错误处理 - 创建重复任务名称
+POST http://localhost:3001/tasks
+Content-Type: application/json
+
+{
+  "name": "duplicate-task",
+  "schedule": "0 * * * * *",
+  "url": "https://httpbin.org/json"
+}
+
+###
+
+### 13. 测试错误处理 - 无效的 cron 表达式
+POST http://localhost:3001/tasks
+Content-Type: application/json
+
+{
+  "name": "invalid-cron-task",
+  "schedule": "invalid-cron-expression",
+  "url": "https://httpbin.org/json"
+}
+
+###
+
+### 14. 测试错误处理 - 无效的URL
+POST http://localhost:3001/tasks
+Content-Type: application/json
+
+{
+  "name": "invalid-url-task",
+  "schedule": "0 * * * * *",
+  "url": "not-a-valid-url"
+}
+
+###
