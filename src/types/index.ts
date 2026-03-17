@@ -189,3 +189,16 @@ export interface MultiSourceSkillsLeaderboard {
   totalCount: number;
   scrapedAt: string;
 }
+
+export interface SkillsCacheRecord {
+  source: SkillDirectorySource | 'all';
+  limit: number;
+  includeDetails: boolean;
+  cachedAt: string;
+  data: SkillsLeaderboard | MultiSourceSkillsLeaderboard;
+}
+
+export interface SkillsCacheStore {
+  entries: Partial<Record<SkillDirectorySource | 'all', SkillsCacheRecord>>;
+  updatedAt: string;
+}

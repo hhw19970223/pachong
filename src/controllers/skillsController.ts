@@ -1,10 +1,12 @@
 import { Request, Response } from 'express';
 import { asyncHandler } from '@/middleware/errorHandler';
 import { skillsDirectoryScraper } from '@/services/skillsShScraper';
+import { skillsCacheService } from '@/services/skillsCacheService';
 import {
   ApiResponse,
   MultiSourceSkillsLeaderboard,
   SkillDirectorySource,
+  SkillsCacheRecord,
   SkillsLeaderboard,
 } from '@/types';
 
@@ -16,6 +18,11 @@ interface ScrapeQuery {
   includeDetails?: string;
 }
 
+interface SkillsScrapeResponse {
+  result: SkillsLeaderboard | MultiSourceSkillsLeaderboard;
+  cache: SkillsCacheRecord;
+}
+
 export class SkillsController {
   getUsageInfo = asyncHandler(async (_req: Request, res: Response<ApiResponse>) => {
     res.json({
@@ -24,6 +31,7 @@ export class SkillsController {
       data: {
         supportedSources: ['skills.sh', 'clawhub.ai'],
         endpoint: '/api/skills/scrape',
+        cacheEndpoint: '/api/skills/cache',
         query: {
           source: 'all | skills.sh | clawhub.ai',
           limit: '1-20，默认 10',
@@ -35,8 +43,8 @@ export class SkillsController {
   });
 
   scrapeTopSkills = asyncHandler(async (
-    req: Request<{}, ApiResponse<SkillsLeaderboard | MultiSourceSkillsLeaderboard>, {}, ScrapeQuery>,
-    res: Response<ApiResponse<SkillsLeaderboard | MultiSourceSkillsLeaderboard>>
+    req: Request<{}, ApiResponse<SkillsScrapeResponse>, {}, ScrapeQuery>,
+    res: Response<ApiResponse<SkillsScrapeResponse>>
   ) => {
     const limit = this.parseLimit(req.query.limit);
     const includeDetails = req.query.includeDetails !== 'false';
@@ -52,10 +60,42 @@ export class SkillsController {
       data = await skillsDirectoryScraper.scrapeAllSources(limit, includeDetails);
     }
 
+    const cache = await skillsCacheService.save(source, data, {
+      limit,
+      includeDetails,
+    });
+
     res.json({
       success: true,
       message: `成功完成 ${source} 数据抓取`,
-      data,
+      data: {
+        result: data,
+        cache,
+      },
+      timestamp: new Date().toISOString(),
+    });
+  });
+
+  getCachedSkills = asyncHandler(async (
+    req: Request<{}, ApiResponse<SkillsCacheRecord>, {}, ScrapeQuery>,
+    res: Response<ApiResponse<SkillsCacheRecord>>
+  ) => {
+    const source = this.parseSource(req.query.source);
+    const cache = await skillsCacheService.get(source);
+
+    if (!cache) {
+      res.status(404).json({
+        success: false,
+        message: `未找到 ${source} 的缓存数据，请先调用实时抓取接口`,
+        timestamp: new Date().toISOString(),
+      });
+      return;
+    }
+
+    res.json({
+      success: true,
+      message: `成功获取 ${source} 的缓存数据`,
+      data: cache,
       timestamp: new Date().toISOString(),
     });
   });

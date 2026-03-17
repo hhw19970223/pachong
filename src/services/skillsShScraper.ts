@@ -1,4 +1,4 @@
-import cheerio from 'cheerio';
+import * as cheerio from 'cheerio';
 import { AxiosError } from 'axios';
 import { httpClient } from '@/utils/httpClient';
 import logger from '@/utils/logger';
