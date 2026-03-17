@@ -107,3 +107,85 @@ export interface TaskError {
   timestamp: Date;
   taskName?: string;
 }
+
+export type SkillDirectorySource = 'skills.sh' | 'clawhub.ai';
+
+export interface SkillAuditStatus {
+  name: string;
+  status: string;
+  url?: string;
+}
+
+export interface SkillInstallationMetric {
+  platform: string;
+  installs: number;
+  installsText?: string;
+}
+
+export interface SkillModerationInfo {
+  verdict?: string;
+  summary?: string | null;
+  reasonCodes?: string[];
+  updatedAt?: string;
+  isSuspicious?: boolean;
+  isMalwareBlocked?: boolean;
+}
+
+export interface DirectorySkillStats {
+  downloads?: number;
+  downloadsText?: string;
+  installsWeekly?: number;
+  installsWeeklyText?: string;
+  installsCurrent?: number;
+  installsAllTime?: number;
+  stars?: number;
+  versions?: number;
+  comments?: number;
+}
+
+export interface DirectorySkillContent {
+  markdown?: string;
+  html?: string;
+  rawText?: string;
+}
+
+export interface DirectorySkillEntry {
+  source: SkillDirectorySource;
+  rank: number;
+  slug: string;
+  name: string;
+  owner?: string;
+  repository?: string;
+  summary?: string;
+  detailUrl: string;
+  installCommand?: string;
+  firstSeen?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  latestVersion?: string;
+  latestVersionCreatedAt?: string;
+  changelog?: string;
+  tags?: string[];
+  stats: DirectorySkillStats;
+  suspicious?: boolean;
+  moderation?: SkillModerationInfo;
+  audits?: SkillAuditStatus[];
+  installedOn?: SkillInstallationMetric[];
+  skillFile?: DirectorySkillContent;
+  raw?: Record<string, unknown>;
+}
+
+export interface SkillsLeaderboard {
+  source: SkillDirectorySource;
+  skills: DirectorySkillEntry[];
+  totalCount: number;
+  scrapedAt: string;
+  nextCursor?: string | null;
+}
+
+export interface MultiSourceSkillsLeaderboard {
+  sources: SkillsLeaderboard[];
+  combined: DirectorySkillEntry[];
+  totalCount: number;
+  scrapedAt: string;
+}

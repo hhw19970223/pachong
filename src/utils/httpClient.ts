@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import config from '@/config';
 import logger from './logger';
 
@@ -70,7 +70,7 @@ export class HttpClient {
         logger.warn(`HTTP request attempt ${attempt}/${maxRetries} failed: ${error}`);
         
         if (attempt < maxRetries) {
-          const delay = config.scraper.retryDelay * attempt; // 指数退避
+          const delay = this.getRetryDelayMs(error as AxiosError, attempt);
           logger.debug(`Retrying in ${delay}ms...`);
           await this.delay(delay);
         }
@@ -82,6 +82,26 @@ export class HttpClient {
 
   private delay(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  private getRetryDelayMs(error: AxiosError, attempt: number): number {
+    const retryAfter = error.response?.headers?.['retry-after'];
+    if (typeof retryAfter === 'string') {
+      const seconds = parseInt(retryAfter, 10);
+      if (!Number.isNaN(seconds) && seconds > 0) {
+        return seconds * 1000;
+      }
+    }
+
+    const rateLimitReset = error.response?.headers?.['ratelimit-reset'];
+    if (typeof rateLimitReset === 'string') {
+      const seconds = parseInt(rateLimitReset, 10);
+      if (!Number.isNaN(seconds) && seconds > 0) {
+        return seconds * 1000;
+      }
+    }
+
+    return config.scraper.retryDelay * attempt;
   }
 }
 
