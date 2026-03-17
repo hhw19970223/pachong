@@ -45,6 +45,9 @@ class App {
     // 解析JSON和URL编码数据
     this.app.use(express.json({ limit: '10mb' }));
     this.app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+    // 静态文件服务
+    this.app.use(express.static('public'));
   }
 
   private setupRoutes(): void {
