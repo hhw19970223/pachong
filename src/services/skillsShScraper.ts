@@ -189,10 +189,16 @@ export class SkillsDirectoryScraper {
   }
 
   private async fetchExpandedSkillsShHomepageHtml(): Promise<string> {
-    const browser = await puppeteer.launch({
-      headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    });
+    let browser;
+
+    try {
+      browser = await puppeteer.launch(this.getPuppeteerLaunchOptions());
+    } catch (error) {
+      throw new Error(
+        'Puppeteer 启动失败。当前 Linux 运行环境缺少浏览器依赖库，推荐使用 Debian/Ubuntu 系基础镜像并安装 Chromium，或在环境变量中配置 PUPPETEER_EXECUTABLE_PATH 指向已安装的 Chrome/Chromium。' +
+          ` 原始错误: ${this.getErrorMessage(error)}`
+      );
+    }
 
     try {
       const page = await browser.newPage();
@@ -226,6 +232,20 @@ export class SkillsDirectoryScraper {
     } finally {
       await browser.close();
     }
+  }
+
+  private getPuppeteerLaunchOptions(): Parameters<typeof puppeteer.launch>[0] {
+    const executablePath = process.env.PUPPETEER_EXECUTABLE_PATH?.trim();
+
+    return {
+      headless: process.env.PUPPETEER_HEADLESS !== 'false',
+      executablePath: executablePath || undefined,
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+      ],
+    };
   }
 
   private extractSkillsShDetailUrls($: cheerio.CheerioAPI): string[] {
@@ -545,6 +565,14 @@ export class SkillsDirectoryScraper {
 
   private isNotFound(error: unknown): boolean {
     return error instanceof AxiosError && error.response?.status === 404;
+  }
+
+  private getErrorMessage(error: unknown): string {
+    if (error instanceof Error) {
+      return error.message;
+    }
+
+    return String(error);
   }
 
   private parseHumanNumber(value: string): number | undefined {
