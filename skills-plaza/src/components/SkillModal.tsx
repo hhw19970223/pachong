@@ -1,31 +1,28 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Skill } from '@/types/skill';
-import { 
-  formatNumber, 
-  getAuditStatusColor, 
-  truncateText, 
-  getPlatformIcon 
-} from '@/lib/utils';
-import { 
-  X, 
-  Star, 
-  Download, 
-  Shield, 
-  ExternalLink, 
-  Copy, 
-  User, 
-  Clock,
-  CheckCircle,
+import { useEffect, useState } from 'react';
+import {
   AlertCircle,
-  XCircle,
-  Terminal,
-  Globe,
-  Github,
   Calendar,
-  TrendingUp
+  CheckCircle,
+  Copy,
+  Download,
+  ExternalLink,
+  Github,
+  Globe,
+  Shield,
+  Sparkles,
+  Star,
+  TrendingUp,
+  X,
+  XCircle,
 } from 'lucide-react';
+import { Skill } from '@/types/skill';
+import {
+  formatNumber,
+  getPlatformIcon,
+  truncateText,
+} from '@/lib/utils';
 
 interface SkillModalProps {
   skill: Skill | null;
@@ -33,322 +30,400 @@ interface SkillModalProps {
   onClose: () => void;
 }
 
+type ModalTab = 'overview' | 'details' | 'security';
+
+const TABS: Array<{ id: ModalTab; label: string }> = [
+  { id: 'overview', label: 'Overview' },
+  { id: 'details', label: 'Details' },
+  { id: 'security', label: 'Security' },
+];
+
 export function SkillModal({ skill, isOpen, onClose }: SkillModalProps) {
   const [copied, setCopied] = useState(false);
-  const [activeTab, setActiveTab] = useState<'overview' | 'details' | 'security'>('overview');
+  const [activeTab, setActiveTab] = useState<ModalTab>('overview');
 
-  if (!skill || !isOpen) return null;
+  useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+
+    const previousOverflow = document.body.style.overflow;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, onClose]);
+
+  if (!skill || !isOpen) {
+    return null;
+  }
+
+  const repositoryUrl =
+    skill.raw?.repositoryUrl || `https://github.com/${skill.repository}`;
 
   const handleCopyCommand = async () => {
     try {
       await navigator.clipboard.writeText(skill.installCommand);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error('Failed to copy command:', err);
-    }
-  };
-
-  const getAuditIcon = (status: string) => {
-    switch (status) {
-      case 'Pass':
-        return <CheckCircle className="w-4 h-4 text-green-600" />;
-      case 'Warn':
-        return <AlertCircle className="w-4 h-4 text-yellow-600" />;
-      case 'Fail':
-        return <XCircle className="w-4 h-4 text-red-600" />;
-      default:
-        return <Shield className="w-4 h-4 text-gray-400" />;
+    } catch (error) {
+      console.error('Failed to copy command:', error);
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto">
-      <div className="flex min-h-screen items-center justify-center p-4">
-        {/* Backdrop */}
-        <div 
-          className="absolute inset-0 bg-black bg-opacity-50 transition-opacity"
-          onClick={onClose}
-        />
-        
-        {/* Modal */}
-        <div className="relative bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
-          {/* Header */}
-          <div className="bg-gradient-to-r from-blue-500 to-purple-600 px-6 py-4 text-white">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="bg-white/20 p-2 rounded-lg">
-                  <Terminal className="w-6 h-6" />
-                </div>
-                <div>
-                  <h2 className="text-xl font-bold">{skill.name}</h2>
-                  <p className="text-blue-100 text-sm">by {skill.owner}</p>
-                </div>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div
+        className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm"
+        onClick={onClose}
+      />
+
+      <div className="relative z-10 flex max-h-[90vh] w-full max-w-5xl flex-col overflow-hidden rounded-[2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.98),rgba(7,11,20,0.98))] shadow-[0_40px_120px_rgba(2,6,23,0.7)]">
+        <div className="border-b border-white/10 px-6 py-6">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <div className="inline-flex rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs font-medium uppercase tracking-[0.24em] text-cyan-100">
+                Skill briefing
               </div>
-              <button
-                onClick={onClose}
-                className="p-2 hover:bg-white/20 rounded-lg transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
+              <h2 className="mt-4 text-3xl font-semibold text-white">{skill.name}</h2>
+              <p className="mt-2 text-sm text-slate-400">
+                Maintained by {skill.owner} • Ranked #{skill.rank}
+              </p>
             </div>
 
-            {/* Tab Navigation */}
-            <div className="flex gap-1 mt-4 bg-white/10 p-1 rounded-lg">
-              {[
-                { id: 'overview', label: 'Overview' },
-                { id: 'details', label: 'Details' },
-                { id: 'security', label: 'Security' }
-              ].map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id as any)}
-                  className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                    activeTab === tab.id 
-                      ? 'bg-white text-blue-600' 
-                      : 'text-white/80 hover:bg-white/10'
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Content */}
-          <div className="max-h-[60vh] overflow-y-auto p-6">
-            {activeTab === 'overview' && (
-              <div className="space-y-6">
-                {/* Quick Stats */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
-                    <Download className="w-6 h-6 text-green-600 mx-auto mb-2" />
-                    <div className="text-2xl font-bold text-green-600">{skill.stats.installsWeeklyText}</div>
-                    <div className="text-sm text-gray-600">Weekly Downloads</div>
-                  </div>
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-center">
-                    <Star className="w-6 h-6 text-yellow-600 mx-auto mb-2" />
-                    <div className="text-2xl font-bold text-yellow-600">{formatNumber(skill.stats.stars)}</div>
-                    <div className="text-sm text-gray-600">GitHub Stars</div>
-                  </div>
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
-                    <TrendingUp className="w-6 h-6 text-blue-600 mx-auto mb-2" />
-                    <div className="text-2xl font-bold text-blue-600">#{skill.rank}</div>
-                    <div className="text-sm text-gray-600">Ranking</div>
-                  </div>
-                </div>
-
-                {/* Description */}
-                <div>
-                  <h3 className="text-lg font-semibold mb-3 text-gray-900">Description</h3>
-                  <p className="text-gray-700 leading-relaxed">{skill.summary}</p>
-                </div>
-
-                {/* Install Command */}
-                <div>
-                  <h3 className="text-lg font-semibold mb-3 text-gray-900">Installation</h3>
-                  <div className="bg-gray-900 rounded-lg p-4 relative group">
-                    <code className="text-green-400 font-mono text-sm break-all">
-                      {skill.installCommand}
-                    </code>
-                    <button
-                      onClick={handleCopyCommand}
-                      className="absolute top-2 right-2 p-2 bg-gray-800 hover:bg-gray-700 rounded-md transition-colors"
-                      title="Copy command"
-                    >
-                      {copied ? (
-                        <CheckCircle className="w-4 h-4 text-green-400" />
-                      ) : (
-                        <Copy className="w-4 h-4 text-gray-400" />
-                      )}
-                    </button>
-                  </div>
-                  {copied && (
-                    <p className="text-green-600 text-sm mt-2 animate-fade-in">
-                      ✅ Command copied to clipboard!
-                    </p>
-                  )}
-                </div>
-
-                {/* Platform Distribution */}
-                {skill.installedOn && skill.installedOn.length > 0 && (
-                  <div>
-                    <h3 className="text-lg font-semibold mb-3 text-gray-900">Platform Distribution</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {skill.installedOn.map((platform, index) => (
-                        <div key={index} className="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
-                          <div className="flex items-center gap-2">
-                            <span className="text-lg">{getPlatformIcon(platform.platform)}</span>
-                            <span className="font-medium capitalize">{platform.platform}</span>
-                          </div>
-                          <span className="text-gray-600 font-mono text-sm">{platform.installsText}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {activeTab === 'details' && (
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <h3 className="text-lg font-semibold mb-3 text-gray-900">Basic Information</h3>
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-2 text-sm">
-                        <User className="w-4 h-4 text-gray-400" />
-                        <span className="text-gray-600">Owner:</span>
-                        <span className="font-medium">{skill.owner}</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-sm">
-                        <Github className="w-4 h-4 text-gray-400" />
-                        <span className="text-gray-600">Repository:</span>
-                        <span className="font-medium">{skill.repository}</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-sm">
-                        <Calendar className="w-4 h-4 text-gray-400" />
-                        <span className="text-gray-600">First seen:</span>
-                        <span className="font-medium">{skill.firstSeen}</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-sm">
-                        <Globe className="w-4 h-4 text-gray-400" />
-                        <span className="text-gray-600">Source:</span>
-                        <span className="font-medium capitalize">{skill.source}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h3 className="text-lg font-semibold mb-3 text-gray-900">Statistics</h3>
-                    <div className="space-y-3">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">Weekly Downloads:</span>
-                        <span className="font-medium">{skill.stats.installsWeekly.toLocaleString()}</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">GitHub Stars:</span>
-                        <span className="font-medium">{skill.stats.stars.toLocaleString()}</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">Ranking:</span>
-                        <span className="font-medium">#{skill.rank}</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">Total Platforms:</span>
-                        <span className="font-medium">{skill.installedOn.length}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Tags */}
-                {skill.tags && skill.tags.length > 0 && (
-                  <div>
-                    <h3 className="text-lg font-semibold mb-3 text-gray-900">Tags</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {skill.tags.map((tag, index) => (
-                        <span
-                          key={index}
-                          className="px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full font-medium"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Skill Content Preview */}
-                {skill.skillFile && (
-                  <div>
-                    <h3 className="text-lg font-semibold mb-3 text-gray-900">Content Preview</h3>
-                    <div className="bg-gray-50 rounded-lg p-4 max-h-64 overflow-y-auto">
-                      <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
-                        {truncateText(skill.skillFile.rawText, 500)}
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {activeTab === 'security' && (
-              <div className="space-y-6">
-                <div>
-                  <h3 className="text-lg font-semibold mb-3 text-gray-900">Security Audits</h3>
-                  {skill.audits && skill.audits.length > 0 ? (
-                    <div className="space-y-3">
-                      {skill.audits.map((audit, index) => (
-                        <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
-                          <div className="flex items-center gap-3">
-                            {getAuditIcon(audit.status)}
-                            <div>
-                              <div className="font-medium text-gray-900">{audit.name}</div>
-                              <div className={`text-sm ${audit.status === 'Pass' ? 'text-green-600' : audit.status === 'Warn' ? 'text-yellow-600' : 'text-red-600'}`}>
-                                Status: {audit.status}
-                              </div>
-                            </div>
-                          </div>
-                          <a
-                            href={audit.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-600 hover:text-blue-800 transition-colors"
-                          >
-                            <ExternalLink className="w-4 h-4" />
-                          </a>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-8 text-gray-500">
-                      <Shield className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-                      <p>No security audit information available.</p>
-                    </div>
-                  )}
-                </div>
-
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <div className="flex items-start gap-3">
-                    <Shield className="w-5 h-5 text-blue-600 mt-0.5" />
-                    <div>
-                      <h4 className="font-medium text-blue-900 mb-1">Security Information</h4>
-                      <p className="text-blue-800 text-sm">
-                        All skills undergo security audits by trusted third-party services. 
-                        Check individual audit reports for detailed security assessments.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Footer Actions */}
-          <div className="border-t bg-gray-50 px-6 py-4 flex gap-3">
-            <a
-              href={skill.detailUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-center py-2 px-4 rounded-lg font-medium transition-colors"
+            <button
+              type="button"
+              onClick={onClose}
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-slate-200 transition hover:border-white/20 hover:bg-white/10"
             >
-              View on Skills.sh
-            </a>
-            {skill.raw?.repositoryUrl && (
-              <a
-                href={skill.raw.repositoryUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-gray-700 hover:bg-gray-800 text-white py-2 px-4 rounded-lg font-medium transition-colors flex items-center gap-2"
-              >
-                <Github className="w-4 h-4" />
-                GitHub
-              </a>
-            )}
+              <X className="h-5 w-5" />
+            </button>
           </div>
+
+          <div className="mt-6 flex flex-wrap gap-2">
+            {TABS.map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setActiveTab(tab.id)}
+                className={`min-h-11 rounded-full border px-4 py-2 text-sm transition ${
+                  activeTab === tab.id
+                    ? 'border-cyan-300/40 bg-cyan-300/12 text-cyan-100'
+                    : 'border-white/10 bg-white/5 text-slate-300 hover:border-white/20 hover:text-white'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="scrollbar-thin overflow-y-auto px-6 py-6">
+          {activeTab === 'overview' ? (
+            <div className="space-y-6">
+              <div className="grid gap-4 md:grid-cols-3">
+                <MetricTile
+                  icon={<Download className="h-5 w-5 text-emerald-300" />}
+                  label="Weekly installs"
+                  value={skill.stats.installsWeeklyText}
+                />
+                <MetricTile
+                  icon={<Star className="h-5 w-5 text-amber-300" />}
+                  label="GitHub stars"
+                  value={formatNumber(skill.stats.stars)}
+                />
+                <MetricTile
+                  icon={<TrendingUp className="h-5 w-5 text-cyan-300" />}
+                  label="Current rank"
+                  value={`#${skill.rank}`}
+                />
+              </div>
+
+              <section className="rounded-[1.75rem] border border-white/10 bg-white/5 p-5">
+                <p className="text-xs uppercase tracking-[0.22em] text-cyan-100/80">
+                  Summary
+                </p>
+                <p className="mt-4 text-sm leading-7 text-slate-300">{skill.summary}</p>
+              </section>
+
+              <section className="rounded-[1.75rem] border border-white/10 bg-white/5 p-5">
+                <div className="flex items-center justify-between gap-4">
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.22em] text-cyan-100/80">
+                      Install command
+                    </p>
+                    <p className="mt-2 text-sm text-slate-400">
+                      Copy the command and drop it into your terminal or agent workflow.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleCopyCommand}
+                    className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-200 transition hover:border-white/20 hover:bg-white/10"
+                  >
+                    {copied ? (
+                      <CheckCircle className="h-4 w-4 text-emerald-300" />
+                    ) : (
+                      <Copy className="h-4 w-4" />
+                    )}
+                    {copied ? 'Copied' : 'Copy'}
+                  </button>
+                </div>
+                <code className="mt-4 block overflow-x-auto rounded-2xl bg-slate-950/80 p-4 text-sm leading-6 text-emerald-300">
+                  {skill.installCommand}
+                </code>
+              </section>
+
+              {skill.installedOn.length > 0 ? (
+                <section className="rounded-[1.75rem] border border-white/10 bg-white/5 p-5">
+                  <p className="text-xs uppercase tracking-[0.22em] text-cyan-100/80">
+                    Platform footprint
+                  </p>
+                  <div className="mt-4 grid gap-3 md:grid-cols-2">
+                    {skill.installedOn.map((platform) => (
+                      <div
+                        key={platform.platform}
+                        className="flex items-center justify-between rounded-2xl border border-white/10 bg-slate-950/45 px-4 py-3"
+                      >
+                        <div className="flex items-center gap-3 text-slate-200">
+                          <span className="text-lg">{getPlatformIcon(platform.platform)}</span>
+                          <span>{platform.platform}</span>
+                        </div>
+                        <span className="text-sm text-slate-400">{platform.installsText}</span>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              ) : null}
+            </div>
+          ) : null}
+
+          {activeTab === 'details' ? (
+            <div className="space-y-6">
+              <section className="grid gap-4 md:grid-cols-2">
+                <InfoCard
+                  title="Catalog facts"
+                  rows={[
+                    {
+                      icon: <Github className="h-4 w-4" />,
+                      label: 'Repository',
+                      value: skill.repository,
+                    },
+                    {
+                      icon: <Calendar className="h-4 w-4" />,
+                      label: 'First seen',
+                      value: skill.firstSeen,
+                    },
+                    {
+                      icon: <Globe className="h-4 w-4" />,
+                      label: 'Source',
+                      value: skill.source,
+                    },
+                    {
+                      icon: <Sparkles className="h-4 w-4" />,
+                      label: 'Platforms',
+                      value: String(skill.installedOn.length),
+                    },
+                  ]}
+                />
+
+                <InfoCard
+                  title="Adoption"
+                  rows={[
+                    {
+                      icon: <Download className="h-4 w-4" />,
+                      label: 'Weekly installs',
+                      value: skill.stats.installsWeekly.toLocaleString(),
+                    },
+                    {
+                      icon: <Star className="h-4 w-4" />,
+                      label: 'GitHub stars',
+                      value: skill.stats.stars.toLocaleString(),
+                    },
+                    {
+                      icon: <TrendingUp className="h-4 w-4" />,
+                      label: 'Rank',
+                      value: `#${skill.rank}`,
+                    },
+                    {
+                      icon: <ExternalLink className="h-4 w-4" />,
+                      label: 'Detail page',
+                      value: 'skills.sh',
+                    },
+                  ]}
+                />
+              </section>
+
+              {skill.tags.length > 0 ? (
+                <section className="rounded-[1.75rem] border border-white/10 bg-white/5 p-5">
+                  <p className="text-xs uppercase tracking-[0.22em] text-cyan-100/80">
+                    Tags
+                  </p>
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {skill.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="rounded-full border border-white/10 bg-slate-950/40 px-3 py-1 text-sm text-slate-200"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </section>
+              ) : null}
+
+              {skill.skillFile?.rawText ? (
+                <section className="rounded-[1.75rem] border border-white/10 bg-white/5 p-5">
+                  <p className="text-xs uppercase tracking-[0.22em] text-cyan-100/80">
+                    Content preview
+                  </p>
+                  <p className="mt-4 whitespace-pre-wrap text-sm leading-7 text-slate-300">
+                    {truncateText(skill.skillFile.rawText, 700)}
+                  </p>
+                </section>
+              ) : null}
+            </div>
+          ) : null}
+
+          {activeTab === 'security' ? (
+            <div className="space-y-6">
+              {skill.audits.length > 0 ? (
+                <section className="space-y-3">
+                  {skill.audits.map((audit) => (
+                    <div
+                      key={audit.name}
+                      className="flex items-center justify-between gap-4 rounded-[1.5rem] border border-white/10 bg-white/5 p-4"
+                    >
+                      <div className="flex items-center gap-3">
+                        {getAuditIcon(audit.status)}
+                        <div>
+                          <div className="font-medium text-white">{audit.name}</div>
+                          <div className="text-sm text-slate-400">Status: {audit.status}</div>
+                        </div>
+                      </div>
+
+                      <a
+                        href={audit.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-slate-200 transition hover:border-white/20 hover:bg-white/10"
+                      >
+                        <ExternalLink className="h-4 w-4" />
+                      </a>
+                    </div>
+                  ))}
+                </section>
+              ) : (
+                <div className="rounded-[1.75rem] border border-white/10 bg-white/5 p-6 text-center text-slate-400">
+                  No security audit information is available for this skill yet.
+                </div>
+              )}
+
+              <section className="rounded-[1.75rem] border border-cyan-300/15 bg-cyan-300/10 p-5">
+                <div className="flex items-start gap-3">
+                  <Shield className="mt-0.5 h-5 w-5 text-cyan-200" />
+                  <div>
+                    <h3 className="font-medium text-white">How to read this panel</h3>
+                    <p className="mt-2 text-sm leading-7 text-slate-300">
+                      Treat audit results as one layer of trust. Combine them with the
+                      repository history, install momentum, and the actual `SKILL.md`
+                      content before adopting a skill into production agents.
+                    </p>
+                  </div>
+                </div>
+              </section>
+            </div>
+          ) : null}
+        </div>
+
+        <div className="flex flex-col gap-3 border-t border-white/10 px-6 py-5 sm:flex-row">
+          <a
+            href={skill.detailUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex min-h-11 flex-1 items-center justify-center rounded-full bg-white px-4 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-100"
+          >
+            View on skills.sh
+          </a>
+          <a
+            href={repositoryUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-200 transition hover:border-white/20 hover:bg-white/10"
+          >
+            <Github className="h-4 w-4" />
+            Repository
+          </a>
         </div>
       </div>
     </div>
+  );
+}
+
+function getAuditIcon(status: Skill['audits'][number]['status']) {
+  switch (status) {
+    case 'Pass':
+      return <CheckCircle className="h-5 w-5 text-emerald-300" />;
+    case 'Warn':
+      return <AlertCircle className="h-5 w-5 text-amber-300" />;
+    case 'Fail':
+      return <XCircle className="h-5 w-5 text-rose-300" />;
+  }
+}
+
+function MetricTile({
+  icon,
+  label,
+  value,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+}) {
+  return (
+    <div className="rounded-[1.5rem] border border-white/10 bg-white/5 p-5">
+      <div className="flex items-center gap-2 text-slate-300">
+        {icon}
+        <span className="text-sm">{label}</span>
+      </div>
+      <div className="mt-4 text-2xl font-semibold text-white">{value}</div>
+    </div>
+  );
+}
+
+function InfoCard({
+  title,
+  rows,
+}: {
+  title: string;
+  rows: Array<{ icon: React.ReactNode; label: string; value: string }>;
+}) {
+  return (
+    <section className="rounded-[1.75rem] border border-white/10 bg-white/5 p-5">
+      <p className="text-xs uppercase tracking-[0.22em] text-cyan-100/80">{title}</p>
+      <div className="mt-4 space-y-3">
+        {rows.map((row) => (
+          <div
+            key={`${title}-${row.label}`}
+            className="flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-slate-950/35 px-4 py-3"
+          >
+            <div className="flex items-center gap-3 text-slate-300">
+              {row.icon}
+              <span>{row.label}</span>
+            </div>
+            <span className="text-sm font-medium text-white">{row.value}</span>
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Search, Filter, SortAsc, RefreshCw } from 'lucide-react';
+import { Filter, RefreshCw, Search, SortAsc } from 'lucide-react';
 import { SortOption, FilterOption } from '@/types/skill';
 
 interface SearchAndFiltersProps {
@@ -30,38 +30,37 @@ export function SearchAndFilters({
   filteredCount,
 }: SearchAndFiltersProps) {
   const sortOptions = [
-    { value: 'rank' as SortOption, label: 'By Ranking' },
-    { value: 'name' as SortOption, label: 'By Name' },
-    { value: 'stars' as SortOption, label: 'By Stars' },
-    { value: 'installs' as SortOption, label: 'By Downloads' },
-    { value: 'recent' as SortOption, label: 'Recently Added' },
+    { value: 'rank' as SortOption, label: 'Ranking' },
+    { value: 'name' as SortOption, label: 'Name' },
+    { value: 'stars' as SortOption, label: 'Stars' },
+    { value: 'installs' as SortOption, label: 'Installs' },
+    { value: 'recent' as SortOption, label: 'Recently added' },
   ];
 
   const filterOptions = [
-    { value: 'all' as FilterOption, label: 'All Skills', count: totalCount },
-    { value: 'verified' as FilterOption, label: 'Verified Only' },
-    { value: 'popular' as FilterOption, label: 'Popular (50K+ downloads)' },
-    { value: 'new' as FilterOption, label: 'New (Last 30 days)' },
+    { value: 'all' as FilterOption, label: 'All skills', count: totalCount },
+    { value: 'verified' as FilterOption, label: 'Verified' },
+    { value: 'popular' as FilterOption, label: 'Popular' },
+    { value: 'new' as FilterOption, label: 'New in 30d' },
   ];
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
-      <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center">
-        {/* Search */}
+    <div className="rounded-[2rem] border border-white/10 bg-white/6 p-5 shadow-[0_30px_100px_rgba(3,7,18,0.38)] backdrop-blur-xl">
+      <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
         <div className="flex-1 min-w-0">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => onSearchChange(e.target.value)}
-              placeholder="Search skills by name, owner, description, or tags..."
-              className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-sm"
+              placeholder="Search by skill name, owner, repository, summary, or tag"
+              className="min-h-12 w-full rounded-2xl border border-white/10 bg-slate-950/60 pl-11 pr-12 text-sm text-white placeholder:text-slate-500 outline-none transition focus:border-cyan-300/40"
             />
             {searchTerm && (
               <button
                 onClick={() => onSearchChange('')}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 transition hover:text-slate-200"
                 title="Clear search"
               >
                 ×
@@ -70,84 +69,76 @@ export function SearchAndFilters({
           </div>
         </div>
 
-        {/* Filters and Sort */}
-        <div className="flex flex-wrap gap-3 items-center">
-          {/* Filter Dropdown */}
-          <div className="relative">
-            <select
-              value={filterBy}
-              onChange={(e) => onFilterChange(e.target.value as FilterOption)}
-              className="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2.5 pr-10 text-sm font-medium text-gray-700 hover:border-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all cursor-pointer"
-            >
-              {filterOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                  {option.count !== undefined && ` (${option.count})`}
-                </option>
-              ))}
-            </select>
-            <Filter className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+        <div className="flex flex-col gap-3 xl:items-end">
+          <div className="flex flex-col gap-3 md:flex-row md:items-center">
+            <div className="flex flex-wrap gap-2">
+              {filterOptions.map((option) => {
+                const isActive = option.value === filterBy;
+
+                return (
+                  <button
+                    key={option.value}
+                    type="button"
+                    onClick={() => onFilterChange(option.value)}
+                    className={`min-h-11 rounded-full border px-4 py-2 text-sm transition ${
+                      isActive
+                        ? 'border-cyan-300/40 bg-cyan-300/12 text-cyan-100'
+                        : 'border-white/10 bg-white/5 text-slate-300 hover:border-white/20 hover:text-white'
+                    }`}
+                  >
+                    {option.label}
+                    {option.count !== undefined ? ` (${option.count})` : ''}
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="flex items-center gap-3">
+              <label className="sr-only" htmlFor="sort-skills">
+                Sort skills
+              </label>
+              <div className="relative">
+                <select
+                  id="sort-skills"
+                  value={sortBy}
+                  onChange={(e) => onSortChange(e.target.value as SortOption)}
+                  className="min-h-11 appearance-none rounded-full border border-white/10 bg-slate-950/60 px-4 py-2 pr-10 text-sm text-slate-200 outline-none transition hover:border-white/20"
+                >
+                  {sortOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      Sort by {option.label}
+                    </option>
+                  ))}
+                </select>
+                <SortAsc className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+              </div>
+            </div>
           </div>
 
-          {/* Sort Dropdown */}
-          <div className="relative">
-            <select
-              value={sortBy}
-              onChange={(e) => onSortChange(e.target.value as SortOption)}
-              className="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2.5 pr-10 text-sm font-medium text-gray-700 hover:border-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all cursor-pointer"
-            >
-              {sortOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-            <SortAsc className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-          </div>
+          <div className="flex flex-wrap items-center gap-3 text-sm text-slate-400">
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-2">
+              <Filter className="h-4 w-4 text-cyan-200" />
+              {filteredCount === totalCount ? (
+                <span>Showing all {totalCount} skills</span>
+              ) : (
+                <span>
+                  Showing {filteredCount} of {totalCount}
+                  {searchTerm ? ` for "${searchTerm}"` : ''}
+                </span>
+              )}
+            </div>
 
-          {/* Refresh Button */}
-          {onRefresh && (
-            <button
-              onClick={onRefresh}
-              disabled={isLoading}
-              className="bg-gray-100 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed text-gray-700 p-2.5 rounded-lg transition-all duration-200 flex items-center justify-center"
-              title="Refresh data"
-            >
-              <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* Results Summary */}
-      <div className="mt-4 pt-4 border-t border-gray-100">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-          <div className="text-sm text-gray-600">
-            {filteredCount === totalCount ? (
-              <span>Showing all <strong>{totalCount}</strong> skills</span>
-            ) : (
-              <span>
-                Showing <strong>{filteredCount}</strong> of <strong>{totalCount}</strong> skills
-                {searchTerm && (
-                  <span> matching "<strong>{searchTerm}</strong>"</span>
-                )}
-              </span>
-            )}
-          </div>
-          
-          <div className="flex items-center gap-4 text-xs text-gray-500">
-            <div className="flex items-center gap-1">
-              <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-              <span>Verified</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
-              <span>Warning</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <div className="w-2 h-2 bg-red-400 rounded-full"></div>
-              <span>Issues</span>
-            </div>
+            {onRefresh ? (
+              <button
+                type="button"
+                onClick={onRefresh}
+                disabled={isLoading}
+                className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-slate-200 transition hover:border-white/20 hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                <RefreshCw className={isLoading ? 'h-4 w-4 animate-spin' : 'h-4 w-4'} />
+                Refresh
+              </button>
+            ) : null}
           </div>
         </div>
       </div>

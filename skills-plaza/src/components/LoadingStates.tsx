@@ -3,48 +3,46 @@
 import React from 'react';
 import { Search, RefreshCw, AlertCircle, Zap } from 'lucide-react';
 
-// Loading skeleton for skill cards
 export function SkillCardSkeleton() {
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 animate-pulse">
+    <div className="animate-pulse rounded-[1.75rem] border border-white/10 bg-white/5 p-6">
       <div className="flex justify-between items-start mb-4">
-        <div className="w-8 h-6 bg-gray-200 rounded-full"></div>
-        <div className="w-16 h-6 bg-gray-200 rounded-full"></div>
+        <div className="h-6 w-20 rounded-full bg-white/10"></div>
+        <div className="h-6 w-16 rounded-full bg-white/10"></div>
       </div>
       
       <div className="flex items-center gap-3 mb-4">
-        <div className="w-10 h-10 bg-gray-200 rounded-lg"></div>
+        <div className="h-10 w-10 rounded-2xl bg-white/10"></div>
         <div className="flex-1">
-          <div className="w-32 h-5 bg-gray-200 rounded mb-2"></div>
-          <div className="w-20 h-4 bg-gray-200 rounded"></div>
+          <div className="mb-2 h-5 w-32 rounded bg-white/10"></div>
+          <div className="h-4 w-20 rounded bg-white/10"></div>
         </div>
       </div>
       
-      <div className="w-full h-12 bg-gray-200 rounded mb-4"></div>
+      <div className="mb-4 h-12 w-full rounded bg-white/10"></div>
       
       <div className="flex gap-2 mb-4">
-        <div className="w-16 h-6 bg-gray-200 rounded"></div>
-        <div className="w-20 h-6 bg-gray-200 rounded"></div>
+        <div className="h-6 w-16 rounded-full bg-white/10"></div>
+        <div className="h-6 w-20 rounded-full bg-white/10"></div>
       </div>
       
       <div className="grid grid-cols-2 gap-4 mb-4">
-        <div className="w-full h-5 bg-gray-200 rounded"></div>
-        <div className="w-full h-5 bg-gray-200 rounded"></div>
+        <div className="h-16 w-full rounded-3xl bg-white/10"></div>
+        <div className="h-16 w-full rounded-3xl bg-white/10"></div>
       </div>
       
       <div className="flex gap-2">
-        <div className="flex-1 h-10 bg-gray-200 rounded-lg"></div>
-        <div className="w-10 h-10 bg-gray-200 rounded-lg"></div>
-        <div className="w-10 h-10 bg-gray-200 rounded-lg"></div>
+        <div className="h-11 flex-1 rounded-full bg-white/10"></div>
+        <div className="h-11 w-11 rounded-full bg-white/10"></div>
+        <div className="h-11 w-11 rounded-full bg-white/10"></div>
       </div>
     </div>
   );
 }
 
-// Grid of loading skill cards
 export function LoadingGrid({ count = 6 }: { count?: number }) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
       {Array.from({ length: count }).map((_, index) => (
         <SkillCardSkeleton key={index} />
       ))}
@@ -52,25 +50,23 @@ export function LoadingGrid({ count = 6 }: { count?: number }) {
   );
 }
 
-// Loading state with message
 export function LoadingState({ message = "Loading skills..." }: { message?: string }) {
   return (
-    <div className="flex flex-col items-center justify-center py-16">
+    <div className="flex min-h-screen flex-col items-center justify-center px-4 py-16 text-center">
       <div className="relative mb-6">
-        <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-          <Zap className="w-8 h-8 text-white" />
+        <div className="flex h-16 w-16 items-center justify-center rounded-full border border-cyan-300/20 bg-cyan-300/10">
+          <Zap className="h-8 w-8 text-cyan-200" />
         </div>
-        <div className="absolute inset-0 w-16 h-16 border-4 border-blue-200 border-t-blue-500 rounded-full animate-spin"></div>
+        <div className="absolute inset-0 h-16 w-16 animate-spin rounded-full border-4 border-cyan-300/10 border-t-cyan-300"></div>
       </div>
-      <h3 className="text-lg font-medium text-gray-900 mb-2">{message}</h3>
-      <p className="text-gray-500 text-center max-w-md">
+      <h3 className="mb-2 text-lg font-medium text-white">{message}</h3>
+      <p className="max-w-md text-slate-400">
         Fetching the latest AI skills from Skills.sh. This may take a few moments.
       </p>
     </div>
   );
 }
 
-// Empty state when no skills found
 export function EmptyState({ 
   searchTerm, 
   onClearSearch,
@@ -83,25 +79,26 @@ export function EmptyState({
   const isSearchResult = !!searchTerm;
   
   return (
-    <div className="flex flex-col items-center justify-center py-16 text-center">
-      <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-6">
-        <Search className="w-8 h-8 text-gray-400" />
+    <div className="mt-6 flex flex-col items-center justify-center rounded-[2rem] border border-white/10 bg-white/5 px-6 py-16 text-center">
+      <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-white/5">
+        <Search className="h-8 w-8 text-slate-500" />
       </div>
       
       {isSearchResult ? (
         <>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">
+          <h3 className="mb-2 text-lg font-medium text-white">
             No skills found
           </h3>
-          <p className="text-gray-500 mb-6 max-w-md">
-            No skills match your search for "<strong>{searchTerm}</strong>". 
-            Try adjusting your search terms or filters.
+          <p className="mb-6 max-w-md text-slate-400">
+            No skills match your search for{' '}
+            <span className="font-medium text-white">{searchTerm}</span>. Try
+            adjusting your search terms or filters.
           </p>
           <div className="flex gap-3">
             {onClearSearch && (
               <button
                 onClick={onClearSearch}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                className="min-h-11 rounded-full bg-white px-4 py-2 font-medium text-slate-950 transition hover:bg-cyan-100"
               >
                 Clear Search
               </button>
@@ -109,9 +106,9 @@ export function EmptyState({
             {onRefresh && (
               <button
                 onClick={onRefresh}
-                className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
+                className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 font-medium text-slate-200 transition hover:border-white/20 hover:bg-white/10"
               >
-                <RefreshCw className="w-4 h-4" />
+                <RefreshCw className="h-4 w-4" />
                 Refresh
               </button>
             )}
@@ -119,18 +116,18 @@ export function EmptyState({
         </>
       ) : (
         <>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">
+          <h3 className="mb-2 text-lg font-medium text-white">
             No skills available
           </h3>
-          <p className="text-gray-500 mb-6 max-w-md">
+          <p className="mb-6 max-w-md text-slate-400">
             There are no skills available at the moment. This might be a temporary issue.
           </p>
           {onRefresh && (
             <button
               onClick={onRefresh}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
+              className="inline-flex min-h-11 items-center gap-2 rounded-full bg-white px-4 py-2 font-medium text-slate-950 transition hover:bg-cyan-100"
             >
-              <RefreshCw className="w-4 h-4" />
+              <RefreshCw className="h-4 w-4" />
               Try Again
             </button>
           )}
@@ -140,7 +137,6 @@ export function EmptyState({
   );
 }
 
-// Error state
 export function ErrorState({ 
   message = "Something went wrong", 
   onRetry 
@@ -149,24 +145,24 @@ export function ErrorState({
   onRetry?: () => void;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center py-16 text-center">
-      <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-6">
-        <AlertCircle className="w-8 h-8 text-red-500" />
+    <div className="flex min-h-screen flex-col items-center justify-center px-4 py-16 text-center">
+      <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-red-400/10">
+        <AlertCircle className="h-8 w-8 text-red-300" />
       </div>
       
-      <h3 className="text-lg font-medium text-gray-900 mb-2">
+      <h3 className="mb-2 text-lg font-medium text-white">
         Oops! Something went wrong
       </h3>
-      <p className="text-gray-500 mb-6 max-w-md">
+      <p className="mb-6 max-w-md text-slate-400">
         {message}. Please try refreshing the page or check back later.
       </p>
       
       {onRetry && (
         <button
           onClick={onRetry}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
+          className="inline-flex min-h-11 items-center gap-2 rounded-full bg-white px-4 py-2 font-medium text-slate-950 transition hover:bg-cyan-100"
         >
-          <RefreshCw className="w-4 h-4" />
+          <RefreshCw className="h-4 w-4" />
           Try Again
         </button>
       )}
@@ -174,7 +170,6 @@ export function ErrorState({
   );
 }
 
-// Inline loading spinner
 export function InlineLoader({ size = "sm" }: { size?: "sm" | "md" | "lg" }) {
   const sizeClasses = {
     sm: "w-4 h-4",
@@ -183,6 +178,6 @@ export function InlineLoader({ size = "sm" }: { size?: "sm" | "md" | "lg" }) {
   };
   
   return (
-    <div className={`${sizeClasses[size]} border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin`} />
+    <div className={`${sizeClasses[size]} animate-spin rounded-full border-2 border-white/10 border-t-cyan-300`} />
   );
 }

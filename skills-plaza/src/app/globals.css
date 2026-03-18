@@ -2,7 +2,50 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Custom animations */
+@layer base {
+  :root {
+    --background: #050914;
+    --foreground: #f8fafc;
+    --muted: #94a3b8;
+    --line: rgba(148, 163, 184, 0.18);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background:
+      radial-gradient(circle at top left, rgba(34, 211, 238, 0.18), transparent 28%),
+      radial-gradient(circle at 82% 14%, rgba(245, 158, 11, 0.14), transparent 22%),
+      linear-gradient(180deg, #050914 0%, #0a1220 38%, #060a14 100%);
+    color: var(--foreground);
+  }
+
+  a {
+    transition: color 160ms ease, border-color 160ms ease, background-color 160ms ease;
+  }
+
+  ::selection {
+    background-color: rgba(34, 211, 238, 0.28);
+    color: white;
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: var(--font-display), serif;
+  }
+
+  .font-sans {
+    font-family: var(--font-body), sans-serif;
+  }
+
+  .font-mono {
+    font-family: var(--font-mono), monospace;
+  }
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -61,7 +104,6 @@
   }
 }
 
-/* Utility classes */
 .animate-fade-in {
   animation: fadeIn 0.3s ease-out;
 }
@@ -80,31 +122,13 @@
   animation: shimmer 2s infinite;
 }
 
-.animate-bounce-soft {
-  animation: bounce-soft 2s infinite;
-}
-
 .animate-rotate-slow {
   animation: rotate-slow 3s linear infinite;
 }
 
-/* Glass morphism effect */
-.glass {
-  background: rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-}
-
-.glass-dark {
-  background: rgba(0, 0, 0, 0.25);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-}
-
-/* Custom scrollbar */
 .scrollbar-thin {
   scrollbar-width: thin;
-  scrollbar-color: rgb(203 213 225) transparent;
+  scrollbar-color: rgba(148, 163, 184, 0.4) transparent;
 }
 
 .scrollbar-thin::-webkit-scrollbar {
@@ -116,39 +140,13 @@
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb {
-  background-color: rgb(203 213 225);
+  background-color: rgba(148, 163, 184, 0.35);
   border-radius: 3px;
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-  background-color: rgb(148 163 184);
+  background-color: rgba(148, 163, 184, 0.55);
 }
-
-/* Card hover effects */
-.card-hover {
-  transition: all 0.2s ease-in-out;
-}
-
-.card-hover:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-}
-
-/* Button animations */
-.button-press {
-  transition: all 0.1s ease-in-out;
-}
-
-.button-press:active {
-  transform: scale(0.98);
-}
-
-/* Text selection */
-::selection {
-  background-color: rgb(59 130 246 / 0.3);
-}
-
-/* Reduce motion for accessibility */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

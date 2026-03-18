@@ -1,32 +1,60 @@
-import { SkillsApiResponse, Skill } from '@/types/skill';
+import { Skill, SkillsApiResponse } from '@/types/skill';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://98.88.137.186:3001';
+export const API_BASE =
+  process.env.NEXT_PUBLIC_API_URL || 'http://98.88.137.186:3001';
+
+type CachedSkillsResponse = {
+  data?: {
+    sources?: Array<{
+      source?: string;
+      skills?: Skill[];
+    }>;
+  };
+};
+
+const JSON_HEADERS = {
+  'Content-Type': 'application/json',
+};
+
+function dedupeSkills(skills: Skill[]): Skill[] {
+  const seen = new Set<string>();
+
+  return skills.filter((skill) => {
+    if (seen.has(skill.slug)) {
+      return false;
+    }
+
+    seen.add(skill.slug);
+    return true;
+  });
+}
 
 export class SkillsApiService {
   static async getSkills(source = 'skills.sh', limit = 50): Promise<Skill[]> {
     try {
-      const response = await fetch(`${API_BASE}/api/skills/scrape?source=${source}&limit=${limit}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        cache: 'no-store', // 确保获取最新数据
-      });
+      const response = await fetch(
+        `${API_BASE}/api/skills/scrape?source=${source}&limit=${limit}`,
+        {
+          method: 'GET',
+          headers: JSON_HEADERS,
+          cache: 'no-store',
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`API error: ${response.status} ${response.statusText}`);
       }
 
       const data: SkillsApiResponse = await response.json();
-      
-      if (data.success && data.data?.result?.skills) {
-        return data.data.result.skills;
-      } else {
+      const skills = data.success ? data.data?.result?.skills ?? [] : [];
+
+      if (skills.length === 0) {
         throw new Error(data.message || 'Failed to fetch skills data');
       }
+
+      return dedupeSkills(skills);
     } catch (error) {
       console.error('Failed to fetch skills:', error);
-      // 返回示例数据作为fallback
       return this.getFallbackData();
     }
   }
@@ -35,31 +63,33 @@ export class SkillsApiService {
     try {
       const response = await fetch(`${API_BASE}/api/skills/cache`, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: JSON_HEADERS,
+        cache: 'no-store',
       });
+
+
+      console.log(response);
 
       if (!response.ok) {
         throw new Error(`Cache API error: ${response.status}`);
       }
 
-      const data = await response.json();
-      
-      // 处理缓存数据结构
-      if (data.data?.sources && data.data.sources.length > 0) {
-        return data.data.sources[0].skills || [];
+    
+      const data: CachedSkillsResponse = await response.json();
+      console.log(data);
+      const skills = (data.data?.sources ?? [])[0].skills ?? [];
+
+      if (skills.length === 0) {
+        throw new Error('No cached skills found');
       }
-      
-      throw new Error('No cached skills found');
+
+      return dedupeSkills(skills);
     } catch (error) {
       console.error('Failed to fetch cached skills:', error);
-      // 尝试从实时接口获取
       return this.getSkills();
     }
   }
 
-  // Fallback数据，基于前面API响应的真实数据结构
   static getFallbackData(): Skill[] {
     return [
       {

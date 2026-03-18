@@ -41,26 +41,6 @@ src/
 npm install
 ```
 
-### Skills.sh 动态抓取说明
-
-项目中的 `skills.sh` 首页抓取使用了 `puppeteer`。如果你部署在 Linux 服务器或容器中，单纯 `npm install` 通常还不够，运行时还需要可用的 Chrome/Chromium 以及对应系统库。
-
-推荐做法：
-
-```bash
-# Debian / Ubuntu
-apt-get update && apt-get install -y chromium
-```
-
-然后在环境变量中指定浏览器路径：
-
-```bash
-PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
-PUPPETEER_HEADLESS=true
-```
-
-如果你使用 Docker，尽量避免 `alpine` 作为 Puppeteer 运行镜像，优先使用 `node:20-bookworm-slim`、`node:20-bullseye` 这类 Debian 系镜像。
-
 ### 配置环境变量
 
 ```bash
@@ -224,13 +204,11 @@ curl -X POST http://localhost:3001/tasks \
 ## 📦 Docker 部署
 
 ```dockerfile
-FROM node:20-bookworm-slim
+FROM node:18-alpine
 WORKDIR /app
 COPY package*.json ./
-RUN apt-get update && apt-get install -y chromium && rm -rf /var/lib/apt/lists/*
 RUN npm ci --only=production
 COPY dist ./dist
-ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 EXPOSE 3001
 CMD ["npm", "start"]
 ```

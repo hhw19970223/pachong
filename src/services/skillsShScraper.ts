@@ -1,6 +1,6 @@
 import * as cheerio from 'cheerio';
 import { AxiosError } from 'axios';
-import puppeteer from 'puppeteer';
+import config from '@/config';
 import { httpClient } from '@/utils/httpClient';
 import logger from '@/utils/logger';
 import {
@@ -90,7 +90,7 @@ export class SkillsDirectoryScraper {
   async scrapeSkillsSh(limit: number = 10, includeDetails: boolean = true): Promise<SkillsLeaderboard> {
     logger.info(`开始爬取 Skills.sh 热门技能，limit=${limit}, includeDetails=${includeDetails}`);
 
-    const homepageHtml = await this.fetchExpandedSkillsShHomepageHtml();
+    const homepageHtml = await this.fetchSkillsShHomepageHtml();
     const $ = cheerio.load(homepageHtml);
     const detailUrls = this.extractSkillsShDetailUrls($).slice(0, limit);
     const skills: DirectorySkillEntry[] = [];
@@ -188,64 +188,29 @@ export class SkillsDirectoryScraper {
     };
   }
 
-  private async fetchExpandedSkillsShHomepageHtml(): Promise<string> {
-    let browser;
+  private async fetchSkillsShHomepageHtml(): Promise<string> {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), config.scraper.requestTimeout);
 
     try {
-      browser = await puppeteer.launch(this.getPuppeteerLaunchOptions());
-    } catch (error) {
-      throw new Error(
-        'Puppeteer 启动失败。当前 Linux 运行环境缺少浏览器依赖库，推荐使用 Debian/Ubuntu 系基础镜像并安装 Chromium，或在环境变量中配置 PUPPETEER_EXECUTABLE_PATH 指向已安装的 Chrome/Chromium。' +
-          ` 原始错误: ${this.getErrorMessage(error)}`
-      );
-    }
-
-    try {
-      const page = await browser.newPage();
-      await page.goto(this.skillsShBaseUrl, {
-        waitUntil: 'networkidle2',
-        timeout: 60_000,
+      const response = await fetch(this.skillsShBaseUrl, {
+        headers: {
+          Accept: 'text/html,application/xhtml+xml',
+          'User-Agent': config.scraper.userAgent,
+        },
+        signal: controller.signal,
       });
-      await page.waitForSelector('body', { timeout: 10_000 });
 
-      const buttonCount = await page.$$eval('[role="button"]', (elements: any[]) => elements.length);
-      logger.info(`Skills.sh 首页找到 ${buttonCount} 个 role="button" 元素，开始点击`);
-
-      for (let index = 0; index < buttonCount; index += 1) {
-        try {
-          const buttons = await page.$$('[role="button"]');
-          const button = buttons[index];
-
-          if (!button) {
-            continue;
-          }
-
-          await button.click({ delay: 50 });
-          await this.delay(200);
-        } catch (error) {
-          logger.warn(`点击 Skills.sh 首页第 ${index + 1} 个按钮失败，继续后续处理`, error);
-        }
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status} ${response.statusText}`);
       }
 
-      await this.delay(3_000);
-      return await page.content();
+      return await response.text();
+    } catch (error) {
+      throw new Error(`获取 Skills.sh 首页 HTML 失败: ${this.getErrorMessage(error)}`);
     } finally {
-      await browser.close();
+      clearTimeout(timeout);
     }
-  }
-
-  private getPuppeteerLaunchOptions(): Parameters<typeof puppeteer.launch>[0] {
-    const executablePath = process.env.PUPPETEER_EXECUTABLE_PATH?.trim();
-
-    return {
-      headless: process.env.PUPPETEER_HEADLESS !== 'false',
-      executablePath: executablePath || undefined,
-      args: [
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage',
-      ],
-    };
   }
 
   private extractSkillsShDetailUrls($: cheerio.CheerioAPI): string[] {

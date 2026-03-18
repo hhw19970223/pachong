@@ -1,29 +1,20 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { Skill, SkillAudit } from '@/types/skill';
+import { FilterOption, Skill, SkillAudit, SortOption } from '@/types/skill';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
 export function formatNumber(num: number): string {
-  if (num >= 1000000) {
-    return (num / 1000000).toFixed(1) + 'M';
-  }
-  if (num >= 1000) {
-    return (num / 1000).toFixed(1) + 'K';
-  }
-  return num.toString();
+  return new Intl.NumberFormat('en', {
+    notation: 'compact',
+    maximumFractionDigits: 1,
+  }).format(num);
 }
 
 export function formatInstallsText(installs: number): string {
-  if (installs >= 1000000) {
-    return `${(installs / 1000000).toFixed(1)}M`;
-  }
-  if (installs >= 1000) {
-    return `${(installs / 1000).toFixed(1)}K`;
-  }
-  return installs.toString();
+  return formatNumber(installs);
 }
 
 export function getAuditStatusColor(status: SkillAudit['status']): string {
@@ -45,56 +36,59 @@ export function getOverallAuditStatus(audits: SkillAudit[]): SkillAudit['status'
   return 'Pass';
 }
 
-export function sortSkills(skills: Skill[], sortBy: string): Skill[] {
-  const sorted = [...skills];
-  
+export function sortSkills(skills: Skill[], sortBy: SortOption): Skill[] {
   switch (sortBy) {
     case 'name':
-      return sorted.sort((a, b) => a.name.localeCompare(b.name));
+      return skills.toSorted((a, b) => a.name.localeCompare(b.name));
     case 'stars':
-      return sorted.sort((a, b) => b.stats.stars - a.stats.stars);
+      return skills.toSorted((a, b) => b.stats.stars - a.stats.stars);
     case 'installs':
-      return sorted.sort((a, b) => b.stats.installsWeekly - a.stats.installsWeekly);
+      return skills.toSorted((a, b) => b.stats.installsWeekly - a.stats.installsWeekly);
     case 'recent':
-      return sorted.sort((a, b) => new Date(b.firstSeen).getTime() - new Date(a.firstSeen).getTime());
+      return skills.toSorted(
+        (a, b) => new Date(b.firstSeen).getTime() - new Date(a.firstSeen).getTime()
+      );
     case 'rank':
     default:
-      return sorted.sort((a, b) => a.rank - b.rank);
+      return skills.toSorted((a, b) => a.rank - b.rank);
   }
 }
 
-export function filterSkills(skills: Skill[], filter: string, searchTerm: string): Skill[] {
-  let filtered = [...skills];
+export function filterSkills(
+  skills: Skill[],
+  filter: FilterOption,
+  searchTerm: string
+): Skill[] {
+  let filtered = skills;
+  const normalizedSearch = searchTerm.trim().toLowerCase();
 
-  // Apply filter
   switch (filter) {
     case 'verified':
-      filtered = filtered.filter(skill => 
+      filtered = filtered.filter((skill) =>
         getOverallAuditStatus(skill.audits) === 'Pass'
       );
       break;
     case 'popular':
-      filtered = filtered.filter(skill => 
+      filtered = filtered.filter((skill) =>
         skill.stats.installsWeekly > 50000
       );
       break;
     case 'new':
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-      filtered = filtered.filter(skill => 
+      filtered = filtered.filter((skill) =>
         new Date(skill.firstSeen) > thirtyDaysAgo
       );
       break;
   }
 
-  // Apply search term
-  if (searchTerm) {
-    const term = searchTerm.toLowerCase();
-    filtered = filtered.filter(skill =>
-      skill.name.toLowerCase().includes(term) ||
-      skill.owner.toLowerCase().includes(term) ||
-      skill.summary.toLowerCase().includes(term) ||
-      skill.tags.some(tag => tag.toLowerCase().includes(term))
+  if (normalizedSearch) {
+    filtered = filtered.filter((skill) =>
+      skill.name.toLowerCase().includes(normalizedSearch) ||
+      skill.owner.toLowerCase().includes(normalizedSearch) ||
+      skill.repository.toLowerCase().includes(normalizedSearch) ||
+      skill.summary.toLowerCase().includes(normalizedSearch) ||
+      skill.tags.some((tag) => tag.toLowerCase().includes(normalizedSearch))
     );
   }
 
