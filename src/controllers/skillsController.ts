@@ -34,7 +34,7 @@ export class SkillsController {
         cacheEndpoint: '/api/skills/cache',
         query: {
           source: 'all | skills.sh | clawhub.ai',
-          limit: '1-20，默认 10',
+          limit: '1-1000，默认 10',
           includeDetails: 'true | false，默认 true',
         },
       },
@@ -103,8 +103,8 @@ export class SkillsController {
   private parseLimit(rawLimit?: string): number {
     const limit = rawLimit ? parseInt(rawLimit, 10) : 10;
 
-    if (Number.isNaN(limit) || limit < 1 || limit > 20) {
-      throw new Error('limit 必须是 1-20 之间的整数');
+    if (Number.isNaN(limit) || limit < 1 || limit > 1000) {
+      throw new Error('limit 必须是 1-1000 之间的整数');
     }
 
     return limit;
