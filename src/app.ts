@@ -22,7 +22,18 @@ class App {
   private setupMiddleware(): void {
     // 安全中间件
     if (config.security.enableHelmet) {
-      this.app.use(helmet());
+      this.app.use(helmet({
+        contentSecurityPolicy: {
+          directives: {
+            defaultSrc: ["'self'"],
+            styleSrc: ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com"],
+            scriptSrc: ["'self'"],
+            imgSrc: ["'self'", "data:", "https:"],
+            fontSrc: ["'self'", "https://cdnjs.cloudflare.com"],
+            connectSrc: ["'self'"]
+          },
+        },
+      }));
     }
 
     // CORS配置
@@ -45,6 +56,9 @@ class App {
     // 解析JSON和URL编码数据
     this.app.use(express.json({ limit: '10mb' }));
     this.app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+    // 静态文件服务
+    this.app.use(express.static('public'));
   }
 
   private setupRoutes(): void {

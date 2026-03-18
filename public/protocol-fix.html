@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skills 广场 - AI技能发现平台</title>
+    <!-- 强制重定向到HTTP如果当前是HTTPS -->
+    <script>
+        if (window.location.protocol === 'https:' && window.location.port !== '443') {
+            // 如果是HTTPS但不是标准443端口，重定向到HTTP
+            const newUrl = 'http://' + window.location.host + window.location.pathname + window.location.search;
+            console.log('重定向到HTTP:', newUrl);
+            window.location.replace(newUrl);
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 600px;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .message {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #555;
+            margin-bottom: 30px;
+        }
+
+        .protocol-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .protocol-info h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .protocol-info ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .protocol-info li {
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .protocol-info li:last-child {
+            border-bottom: none;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102,126,234,0.3);
+        }
+
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #ffc107;
+            margin-bottom: 20px;
+        }
+
+        .loading {
+            display: none;
+            font-size: 1.1rem;
+            color: #667eea;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #17a2b8;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-robot"></i> Skills 广场</h1>
+        </div>
+
+        <div id="protocol-check">
+            <div class="warning">
+                <strong>协议兼容性检查</strong><br>
+                正在检测最佳访问方式...
+            </div>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                正在重定向到最佳访问地址...
+            </div>
+
+            <div class="protocol-info">
+                <h3>💡 访问提示</h3>
+                <ul>
+                    <li><strong>当前协议:</strong> <span id="current-protocol"></span></li>
+                    <li><strong>当前地址:</strong> <span id="current-url"></span></li>
+                    <li><strong>建议地址:</strong> <span id="recommended-url"></span></li>
+                </ul>
+            </div>
+
+            <div class="message">
+                <p>为了确保所有功能正常工作，建议使用HTTP协议访问Skills广场。</p>
+            </div>
+
+            <div class="btn-group">
+                <a href="#" class="btn btn-primary" id="redirect-btn">
+                    <i class="fas fa-external-link-alt"></i> 使用HTTP访问
+                </a>
+                <a href="#" class="btn btn-secondary" id="continue-btn">
+                    <i class="fas fa-forward"></i> 继续当前协议
+                </a>
+            </div>
+
+            <div class="info">
+                <strong>说明:</strong> 我们的服务器运行在HTTP协议上。如果您通过HTTPS访问，可能会遇到资源加载问题。
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 页面加载后执行协议检查
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentProtocol = window.location.protocol;
+            const currentHost = window.location.host;
+            const currentPath = window.location.pathname + window.location.search;
+            const currentUrl = window.location.href;
+            
+            // 更新页面显示信息
+            document.getElementById('current-protocol').textContent = currentProtocol;
+            document.getElementById('current-url').textContent = currentUrl;
+            
+            // 构建推荐URL
+            const recommendedUrl = `http://${currentHost}${currentPath}`;
+            document.getElementById('recommended-url').textContent = recommendedUrl;
+            
+            // 设置按钮链接
+            const redirectBtn = document.getElementById('redirect-btn');
+            const continueBtn = document.getElementById('continue-btn');
+            
+            if (currentProtocol === 'https:' && !currentHost.includes(':443')) {
+                // 如果是HTTPS但不是标准端口，建议切换到HTTP
+                redirectBtn.href = recommendedUrl;
+                redirectBtn.onclick = function() {
+                    document.getElementById('loading').style.display = 'block';
+                    setTimeout(() => {
+                        window.location.replace(recommendedUrl);
+                    }, 1000);
+                    return false;
+                };
+                
+                continueBtn.href = recommendedUrl.replace('http://', 'https://') + '/index.html';
+            } else {
+                // 如果已经是HTTP，直接跳转到主页
+                redirectBtn.href = '/index.html';
+                redirectBtn.textContent = '进入 Skills 广场';
+                continueBtn.style.display = 'none';
+                
+                // 3秒后自动跳转
+                setTimeout(() => {
+                    window.location.href = '/index.html';
+                }, 3000);
+            }
+            
+            continueBtn.onclick = function() {
+                window.location.href = '/index.html';
+                return false;
+            };
+        });
+    </script>
+</body>
+</html>
