@@ -95,11 +95,36 @@ export class SkillsDirectoryScraper {
     const detailUrls = this.extractSkillsShDetailUrls($).slice(0, limit);
     const skills: DirectorySkillEntry[] = [];
 
-    for (const [index, detailUrl] of detailUrls.entries()) {
-      const seed = this.createSkillsShSeed(detailUrl, index + 1);
-      const skill = includeDetails ? await this.scrapeSkillsShDetail(seed) : seed;
-      skills.push(skill);
-      await this.delay(150);
+    const batchSize = 5;
+
+    for (let start = 0; start < detailUrls.length; start += batchSize) {
+      const batch = detailUrls.slice(start, start + batchSize);
+      const batchResults = await Promise.all(
+        batch.map(async (detailUrl, batchIndex) => {
+          const rank = start + batchIndex + 1;
+          const seed = this.createSkillsShSeed(detailUrl, rank);
+
+          try {
+            return includeDetails ? await this.scrapeSkillsShDetail(seed) : seed;
+          } catch (error) {
+            logger.warn(
+              `Skills.sh 技能详情抓取失败，已跳过: ${detailUrl}`,
+              error
+            );
+            return null;
+          }
+        })
+      );
+
+      skills.push(
+        ...batchResults.filter(
+          (skill): skill is DirectorySkillEntry => skill !== null
+        )
+      );
+
+      if (start + batchSize < detailUrls.length) {
+        await this.delay(150);
+      }
     }
 
     logger.info(`Skills.sh 抓取完成，共 ${skills.length} 条`);
