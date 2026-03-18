@@ -22,7 +22,18 @@ class App {
   private setupMiddleware(): void {
     // 安全中间件
     if (config.security.enableHelmet) {
-      this.app.use(helmet());
+      this.app.use(helmet({
+        contentSecurityPolicy: {
+          directives: {
+            defaultSrc: ["'self'"],
+            styleSrc: ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com"],
+            scriptSrc: ["'self'"],
+            imgSrc: ["'self'", "data:", "https:"],
+            fontSrc: ["'self'", "https://cdnjs.cloudflare.com"],
+            connectSrc: ["'self'"]
+          },
+        },
+      }));
     }
 
     // CORS配置
