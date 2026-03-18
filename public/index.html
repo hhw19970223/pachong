@@ -403,7 +403,19 @@
         </div>
     </div>
 
-    <!-- 脚本加载器 - 外部化解决CSP和协议混合问题 -->
-    <script src="/js/script-loader.js"></script>
+    <!-- 内联脚本 - 强制HTTP协议加载，解决协议混合问题 -->
+    <script>
+        // 强制使用HTTP协议加载JavaScript，避免HTTPS访问HTTP服务器的错误
+        (function() {
+            const script = document.createElement('script');
+            script.src = 'http://' + window.location.host + '/js/skills-plaza.js';
+            script.onload = function() { console.log('✅ Skills脚本加载成功'); };
+            script.onerror = function() { 
+                console.error('❌ Skills脚本加载失败'); 
+                document.body.innerHTML += '<div style="position:fixed;top:20px;right:20px;background:#ff4444;color:white;padding:10px;border-radius:5px;z-index:9999;">❌ 脚本加载失败</div>';
+            };
+            document.head.appendChild(script);
+        })();
+    </script>
 </body>
 </html>
