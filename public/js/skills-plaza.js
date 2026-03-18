@@ -4,8 +4,8 @@ let filteredSkills = [];
 let currentPage = 1;
 const skillsPerPage = 12;
 
-// API地址
-const API_BASE = 'http://98.88.137.186:3001';
+// API地址 - 自动适配当前页面协议
+const API_BASE = window.location.protocol + '//' + window.location.host;
 
 // 加载技能数据
 async function loadSkills() {
