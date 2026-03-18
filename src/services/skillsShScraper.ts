@@ -202,7 +202,7 @@ export class SkillsDirectoryScraper {
       });
       await page.waitForSelector('body', { timeout: 10_000 });
 
-      const buttonCount = await page.$$eval('[role="button"]', (elements) => elements.length);
+      const buttonCount = await page.$$eval('[role="button"]', (elements: any[]) => elements.length);
       logger.info(`Skills.sh 首页找到 ${buttonCount} 个 role="button" 元素，开始点击`);
 
       for (let index = 0; index < buttonCount; index += 1) {
