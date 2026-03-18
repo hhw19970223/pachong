@@ -403,23 +403,7 @@
         </div>
     </div>
 
-    <script>
-        // 强制使用HTTP协议加载JavaScript文件，避免HTTPS/HTTP混合内容问题
-        (function() {
-            const script = document.createElement('script');
-            // 始终使用HTTP协议和当前主机名/IP
-            const httpUrl = 'http://' + window.location.host + '/js/skills-plaza.js';
-            script.src = httpUrl;
-            script.onerror = function() {
-                console.error('无法加载Skills广场脚本:', httpUrl);
-                // 显示错误提示
-                document.body.innerHTML += '<div style="position:fixed;top:20px;left:20px;background:red;color:white;padding:10px;border-radius:5px;z-index:9999;">⚠️ 脚本加载失败，请尝试直接访问 http://' + window.location.host + '</div>';
-            };
-            script.onload = function() {
-                console.log('Skills广场脚本加载成功');
-            };
-            document.head.appendChild(script);
-        })();
-    </script>
+    <!-- 脚本加载器 - 外部化解决CSP和协议混合问题 -->
+    <script src="/js/script-loader.js"></script>
 </body>
 </html>
