@@ -1523,9 +1523,9 @@
     },
     "skills.sh": {
       "source": "skills.sh",
-      "limit": 3,
+      "limit": 2,
       "includeDetails": true,
-      "cachedAt": "2026-03-18T01:37:21.886Z",
+      "cachedAt": "2026-03-18T01:41:49.604Z",
       "data": {
         "source": "skills.sh",
         "skills": [
@@ -1676,86 +1676,12 @@
             "raw": {
               "repositoryUrl": "https://github.com/vercel-labs/agent-skills"
             }
-          },
-          {
-            "source": "skills.sh",
-            "rank": 3,
-            "slug": "web-design-guidelines",
-            "name": "web-design-guidelines",
-            "owner": "vercel-labs",
-            "repository": "vercel-labs/agent-skills",
-            "detailUrl": "https://skills.sh/vercel-labs/agent-skills/web-design-guidelines",
-            "stats": {
-              "installsWeekly": 174100,
-              "installsWeeklyText": "174.1K",
-              "stars": 23200
-            },
-            "tags": [],
-            "summary": "Discover and install skills for AI agents.",
-            "installCommand": "$ npx skills add https://github.com/vercel-labs/agent-skills --skill web-design-guidelines",
-            "firstSeen": "Jan 19, 2026",
-            "audits": [
-              {
-                "name": "Gen Agent Trust Hub",
-                "status": "Pass",
-                "url": "https://skills.sh/vercel-labs/agent-skills/web-design-guidelines/security/agent-trust-hub"
-              },
-              {
-                "name": "Socket",
-                "status": "Pass",
-                "url": "https://skills.sh/vercel-labs/agent-skills/web-design-guidelines/security/socket"
-              },
-              {
-                "name": "Snyk",
-                "status": "Warn",
-                "url": "https://skills.sh/vercel-labs/agent-skills/web-design-guidelines/security/snyk"
-              }
-            ],
-            "installedOn": [
-              {
-                "platform": "opencode",
-                "installs": 125700,
-                "installsText": "125.7K"
-              },
-              {
-                "platform": "gemini-cli",
-                "installs": 122400,
-                "installsText": "122.4K"
-              },
-              {
-                "platform": "codex",
-                "installs": 121800,
-                "installsText": "121.8K"
-              },
-              {
-                "platform": "github-copilot",
-                "installs": 113000,
-                "installsText": "113.0K"
-              },
-              {
-                "platform": "cursor",
-                "installs": 108600,
-                "installsText": "108.6K"
-              },
-              {
-                "platform": "claude-code",
-                "installs": 101400,
-                "installsText": "101.4K"
-              }
-            ],
-            "skillFile": {
-              "html": "<h1>Web Interface Guidelines</h1>\n<p>Review files for compliance with Web Interface Guidelines.</p>\n<h2>How It Works</h2>\n<ol>\n<li>Fetch the latest guidelines from the source URL below</li>\n<li>Read the specified files (or prompt user for files/pattern)</li>\n<li>Check against all rules in the fetched guidelines</li>\n<li>Output findings in the terse <code>file:line</code> format</li>\n</ol>\n<h2>Guidelines Source</h2>\n<p>Fetch fresh guidelines before each review:</p>\n<pre class=\"language-text\"><code class=\"language-text code-highlight\"><span class=\"code-line\">https://raw.githubusercontent.com/vercel-labs/web-interface-guidelines/main/command.md\n</span></code></pre>\n<p>Use WebFetch to retrieve the latest rules. The fetched content contains all the rules and output format instructions.</p>\n<h2>Usage</h2>\n<p>When a user provides a file or pattern argument:</p>\n<ol>\n<li>Fetch guidelines from the source URL above</li>\n<li>Read the specified files</li>\n<li>Apply all rules from the fetched guidelines</li>\n<li>Output findings using the format specified in the guidelines</li>\n</ol>\n<p>If no files specified, ask the user which files to review.</p>",
-              "rawText": "Web Interface Guidelines\nReview files for compliance with Web Interface Guidelines.\nHow It Works\n\nFetch the latest guidelines from the source URL below\nRead the specified files (or prompt user for files/pattern)\nCheck against all rules in the fetched guidelines\nOutput findings in the terse file:line format\n\nGuidelines Source\nFetch fresh guidelines before each review:\nhttps://raw.githubusercontent.com/vercel-labs/web-interface-guidelines/main/command.md\n\nUse WebFetch to retrieve the latest rules. The fetched content contains all the rules and output format instructions.\nUsage\nWhen a user provides a file or pattern argument:\n\nFetch guidelines from the source URL above\nRead the specified files\nApply all rules from the fetched guidelines\nOutput findings using the format specified in the guidelines\n\nIf no files specified, ask the user which files to review."
-            },
-            "raw": {
-              "repositoryUrl": "https://github.com/vercel-labs/agent-skills"
-            }
           }
         ],
-        "totalCount": 3,
-        "scrapedAt": "2026-03-18T01:37:21.874Z"
+        "totalCount": 2,
+        "scrapedAt": "2026-03-18T01:41:49.590Z"
       }
     }
   },
-  "updatedAt": "2026-03-18T01:37:21.886Z"
+  "updatedAt": "2026-03-18T01:41:49.604Z"
 }
