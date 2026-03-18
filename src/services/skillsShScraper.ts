@@ -1,5 +1,6 @@
 import * as cheerio from 'cheerio';
 import { AxiosError } from 'axios';
+import puppeteer from 'puppeteer';
 import { httpClient } from '@/utils/httpClient';
 import logger from '@/utils/logger';
 import {
@@ -89,13 +90,8 @@ export class SkillsDirectoryScraper {
   async scrapeSkillsSh(limit: number = 10, includeDetails: boolean = true): Promise<SkillsLeaderboard> {
     logger.info(`开始爬取 Skills.sh 热门技能，limit=${limit}, includeDetails=${includeDetails}`);
 
-    const response = await httpClient.getWithRetry(this.skillsShBaseUrl, {
-      headers: {
-        Accept: 'text/html,application/xhtml+xml',
-      },
-    });
-
-    const $ = cheerio.load(response.data);
+    const homepageHtml = await this.fetchExpandedSkillsShHomepageHtml();
+    const $ = cheerio.load(homepageHtml);
     const detailUrls = this.extractSkillsShDetailUrls($).slice(0, limit);
     const skills: DirectorySkillEntry[] = [];
 
@@ -190,6 +186,46 @@ export class SkillsDirectoryScraper {
       totalCount: combined.length,
       scrapedAt: new Date().toISOString(),
     };
+  }
+
+  private async fetchExpandedSkillsShHomepageHtml(): Promise<string> {
+    const browser = await puppeteer.launch({
+      headless: true,
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    });
+
+    try {
+      const page = await browser.newPage();
+      await page.goto(this.skillsShBaseUrl, {
+        waitUntil: 'networkidle2',
+        timeout: 60_000,
+      });
+      await page.waitForSelector('body', { timeout: 10_000 });
+
+      const buttonCount = await page.$$eval('[role="button"]', (elements) => elements.length);
+      logger.info(`Skills.sh 首页找到 ${buttonCount} 个 role="button" 元素，开始点击`);
+
+      for (let index = 0; index < buttonCount; index += 1) {
+        try {
+          const buttons = await page.$$('[role="button"]');
+          const button = buttons[index];
+
+          if (!button) {
+            continue;
+          }
+
+          await button.click({ delay: 50 });
+          await this.delay(200);
+        } catch (error) {
+          logger.warn(`点击 Skills.sh 首页第 ${index + 1} 个按钮失败，继续后续处理`, error);
+        }
+      }
+
+      await this.delay(3_000);
+      return await page.content();
+    } finally {
+      await browser.close();
+    }
   }
 
   private extractSkillsShDetailUrls($: cheerio.CheerioAPI): string[] {
